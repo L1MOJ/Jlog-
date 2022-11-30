@@ -6,4 +6,8 @@ import com.limoj.jlog.domain.entity.Article;
 
 public interface ArticleService extends IService<Article> {
     ResponseResult hotArticleList();
+
+    ResponseResult mainArticleList();
+
+    ResponseResult getArticleDetail(Long id);
 }
