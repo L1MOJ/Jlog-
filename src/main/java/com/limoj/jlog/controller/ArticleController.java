@@ -27,15 +27,23 @@ public class ArticleController {
 
         return ResponseResult.okResult(articleService.list());
     }
-    @GetMapping("/hotArticleList")
-    public ResponseResult hotArticleList() {
-        ResponseResult responseResult = articleService.hotArticleList();
+    @Operation(summary = "Get articles in pages")
+    @GetMapping("/allArticleList")
+    public ResponseResult allArticleList(Integer pageNum, Integer pageSize, Long categoryId) {
+        return articleService.allArticleList(pageNum,pageSize,categoryId);
+    }
+
+    @Operation(summary = "Get stared articles")
+    @GetMapping("/staredArticles")
+    public ResponseResult staredArticleList() {
+        ResponseResult responseResult = articleService.staredArticleList();
         return responseResult;
     }
 
-    @GetMapping("/mainArticles")
-    public ResponseResult mainArticleList() {
-        ResponseResult responseResult = articleService.mainArticleList();
+    @Operation(summary = "Get 5 newly posted articles")
+    @GetMapping("/newArticles")
+    public ResponseResult newArticles() {
+        ResponseResult responseResult = articleService.newArticleList();
         return responseResult;
     }
 

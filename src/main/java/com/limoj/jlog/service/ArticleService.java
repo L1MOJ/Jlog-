@@ -5,9 +5,12 @@ import com.limoj.jlog.domain.ResponseResult;
 import com.limoj.jlog.domain.entity.Article;
 
 public interface ArticleService extends IService<Article> {
-    ResponseResult hotArticleList();
 
-    ResponseResult mainArticleList();
+    ResponseResult staredArticleList();
 
     ResponseResult getArticleDetail(Long id);
+
+    ResponseResult newArticleList();
+
+    ResponseResult allArticleList(Integer pageNum, Integer pageSize, Long categoryId);
 }
