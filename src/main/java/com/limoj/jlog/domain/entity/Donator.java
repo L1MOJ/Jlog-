@@ -25,7 +25,7 @@ public class Donator  {
     //打赏人姓名
     private String name;
     //打赏金额
-    private String money;
+    private Long money;
     //打赏时间
     private Date donateTime;
 

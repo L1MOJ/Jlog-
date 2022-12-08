@@ -33,14 +33,14 @@ public class ArticleController {
         return articleService.allArticleList(pageNum,pageSize,categoryId);
     }
 
-    @Operation(summary = "Get stared articles")
+    @Operation(summary = "Get stared articles displayed on home page and rightlist")
     @GetMapping("/staredArticles")
     public ResponseResult staredArticleList() {
         ResponseResult responseResult = articleService.staredArticleList();
         return responseResult;
     }
 
-    @Operation(summary = "Get 5 newly posted articles")
+    @Operation(summary = "Get 5 newly posted articles on rightlist")
     @GetMapping("/newArticles")
     public ResponseResult newArticles() {
         ResponseResult responseResult = articleService.newArticleList();

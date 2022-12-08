@@ -17,4 +17,6 @@ public class StaredArticleVo {
     //标题
     private String title;
     private Date createTime;
+    //文章摘要
+    private String summary;
 }

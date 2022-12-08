@@ -25,7 +25,7 @@ public class DonatorServiceImpl extends ServiceImpl<DonatorMapper, Donator> impl
     public ResponseResult getDonators(Integer pageNum, Integer pageSize) {
         LambdaQueryWrapper<Donator> donatorWrapper = new LambdaQueryWrapper<>();
         //按打赏时间排序
-        donatorWrapper.orderByDesc(Donator::getDonateTime);
+        donatorWrapper.orderByDesc(Donator::getMoney);
 
         Page<Donator> page = new Page<>(pageNum,pageSize);
         page(page,donatorWrapper);

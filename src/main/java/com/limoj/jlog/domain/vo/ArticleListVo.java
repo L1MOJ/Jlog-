@@ -16,6 +16,8 @@ public class ArticleListVo {
     private String title;
     //文章摘要
     private String summary;
+
+    private Long categoryId;
     //所属分类名
     private String categoryName;
     //缩略图

@@ -63,7 +63,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper,Article> imple
     @Override
     public ResponseResult allArticleList(Integer pageNum, Integer pageSize, Long categoryId) {
         LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<>();
-        //判断是否传来categoryId,查询时和传来的相同
+        //判断是否传来categoryId,查询时和传来的相同,没传来则全部查询
         queryWrapper.eq(Objects.nonNull(categoryId) && categoryId > 0,Article::getCategoryId,categoryId);
         //正式文章
         queryWrapper.eq(Article::getStatus,SystemConstants.ARTICLE_STATUS_NORMAL);
