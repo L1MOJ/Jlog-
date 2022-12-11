@@ -21,12 +21,13 @@ public class ArticleController {
     @Autowired
     private ArticleService articleService;
 
-    @Operation(summary = "Get all articles")
-    @GetMapping("/list")
-    public ResponseResult test() {
-
-        return ResponseResult.okResult(articleService.list());
+    @Operation(summary = "Get all categories")
+    @GetMapping("/getCategoryList")
+    public ResponseResult getCategory() {
+        return articleService.getCategory();
     }
+
+
     @Operation(summary = "Get articles in pages")
     @GetMapping("/allArticleList")
     public ResponseResult allArticleList(Integer pageNum, Integer pageSize, Long categoryId) {
@@ -47,6 +48,7 @@ public class ArticleController {
         return responseResult;
     }
 
+    @Operation(summary = "Get article's detail by id")
     @GetMapping("/{id}")
     public ResponseResult getArticleDetail(@PathVariable("id") Long id) {
         return articleService.getArticleDetail(id);

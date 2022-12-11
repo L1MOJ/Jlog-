@@ -10,10 +10,14 @@ import com.limoj.jlog.domain.vo.*;
 import com.limoj.jlog.mapper.ArticleMapper;
 import com.limoj.jlog.service.ArticleService;
 import com.limoj.jlog.utils.BeanCopyUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class ArticleServiceImpl extends ServiceImpl<ArticleMapper,Article> implements ArticleService {
@@ -39,10 +43,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper,Article> imple
         Article article = getById(id);
 
         ArticleDetailVo articleDetailVo = BeanCopyUtils.copyBean(article, ArticleDetailVo.class);
-
-        Long categoryId = articleDetailVo.getCategoryId();
-
-        return null;
+        return ResponseResult.okResult(articleDetailVo);
     }
 
     @Override
@@ -81,5 +82,19 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper,Article> imple
 
     }
 
+    @Override
+    public ResponseResult getCategory() {
+        //查询文章表  状态为已发布的文章
+        LambdaQueryWrapper<Article> articleWrapper = new LambdaQueryWrapper<>();
+        articleWrapper.eq(Article::getStatus, SystemConstants.ARTICLE_STATUS_NORMAL);
+
+        List<Article> articleList = baseMapper.selectList(articleWrapper);
+
+        List<Article> categoryList = articleList.stream()
+                .collect(Collectors.toMap(Article::getCategoryId, a -> a, (k1, k2) -> k1)) // 根据文章id去重
+                .values().stream().collect(Collectors.toList()); // 提取去重后的文章列表
+        List<CategoryVo> categoryVos = BeanCopyUtils.copyBeanList(categoryList, CategoryVo.class);
+        return ResponseResult.okResult(categoryVos);
+    }
 
 }

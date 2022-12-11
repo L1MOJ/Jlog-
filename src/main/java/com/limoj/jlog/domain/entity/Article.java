@@ -26,6 +26,8 @@ public class Article {
     private String summary;
     //所属分类id
     private Long categoryId;
+    //类名
+    private String categoryName;
 
     //缩略图
     private String thumbnail;
