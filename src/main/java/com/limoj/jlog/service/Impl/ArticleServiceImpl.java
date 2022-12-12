@@ -1,14 +1,18 @@
 package com.limoj.jlog.service.Impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.limoj.jlog.constants.SystemConstants;
 import com.limoj.jlog.domain.ResponseResult;
 import com.limoj.jlog.domain.entity.Article;
+import com.limoj.jlog.domain.entity.Category;
 import com.limoj.jlog.domain.vo.*;
+import com.limoj.jlog.enums.AppHttpCodeEnum;
 import com.limoj.jlog.mapper.ArticleMapper;
 import com.limoj.jlog.service.ArticleService;
+import com.limoj.jlog.service.CategoryService;
 import com.limoj.jlog.utils.BeanCopyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -62,10 +66,12 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper,Article> imple
     }
 
     @Override
-    public ResponseResult allArticleList(Integer pageNum, Integer pageSize, Long categoryId) {
+    public ResponseResult allArticleList(Integer pageNum, Integer pageSize, Long categoryId,String content) {
         LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<>();
         //判断是否传来categoryId,查询时和传来的相同,没传来则全部查询
         queryWrapper.eq(Objects.nonNull(categoryId) && categoryId > 0,Article::getCategoryId,categoryId);
+        //如果content为null则查询全部
+        queryWrapper.like(Objects.nonNull(content),Article::getTitle,content);
         //正式文章
         queryWrapper.eq(Article::getStatus,SystemConstants.ARTICLE_STATUS_NORMAL);
         //默认按发布时间排序，后续可能会考虑置顶？
@@ -74,9 +80,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper,Article> imple
         Page<Article> page = new Page<>(pageNum,pageSize);
         page(page,queryWrapper);
         //结果封装
-        List<ArticleListVo> articleListVos = BeanCopyUtils.copyBeanList(page.getRecords(), ArticleListVo.class);
+        List<ArticleDetailVo> articleDetailVos = BeanCopyUtils.copyBeanList(page.getRecords(), ArticleDetailVo.class);
 
-        PageVo pageVo = new PageVo(articleListVos,page.getTotal());
+        PageVo pageVo = new PageVo(articleDetailVos,page.getTotal());
 
         return ResponseResult.okResult(pageVo);
 
@@ -97,4 +103,51 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper,Article> imple
         return ResponseResult.okResult(categoryVos);
     }
 
+    @Override
+    public ResponseResult delArticles(List<Integer> articleIds) {
+//        LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<>();
+//        queryWrapper.in(Article::getId,articleIds);
+//        queryWrapper.set(Article::getDelFlag,0);
+//        List<Article> articleList = baseMapper.selectList(queryWrapper);
+        UpdateWrapper<Article> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.in("id",articleIds);
+        updateWrapper.set("del_flag",1);
+        baseMapper.update(null,updateWrapper);
+        List<Article> articleList = baseMapper.selectList(updateWrapper);
+        return ResponseResult.okResult(articleList);
+    }
+
+    @Override
+    public ResponseResult starArticles(List<Integer> articleIds) {
+        List<Article> articles = baseMapper.selectBatchIds(articleIds);
+        for(Article article : articles) {
+            article.setStared(article.getStared()==0?1:0);
+            baseMapper.updateById(article);
+        }
+        return ResponseResult.okResult(articleIds);
+    }
+    @Autowired
+    private CategoryService categoryService;
+    @Override
+    public ResponseResult editArticle(Article article) {
+        UpdateWrapper<Article> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("id",article.getId());
+        baseMapper.update(article,updateWrapper);
+        Category category = categoryService.getBaseMapper().selectById(article.getCategoryId());
+        updateWrapper.set("category_name",category.getName());
+        baseMapper.update(article,updateWrapper);
+        article.setCategoryName(category.getName());
+        return ResponseResult.okResult(article);
+    }
+
+    @Override
+    public ResponseResult addArticle(Article article) {
+        LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Article::getTitle,article.getTitle());
+        if (baseMapper.selectOne(queryWrapper)!=null){
+            return ResponseResult.errorResult(AppHttpCodeEnum.ARTICLE_EXIST);
+        }
+        baseMapper.insert(article);
+        return ResponseResult.okResult(article);
+    }
 }
