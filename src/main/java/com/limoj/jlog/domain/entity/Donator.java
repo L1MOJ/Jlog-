@@ -2,12 +2,11 @@ package com.limoj.jlog.domain.entity;
 
 import java.util.Date;
 
-import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+
 /**
  * (Donator)表实体类
  *

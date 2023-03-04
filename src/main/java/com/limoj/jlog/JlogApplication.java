@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 @MapperScan("com.limoj.jlog.mapper")
 public class JlogApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(JlogApplication.class, args);
     }

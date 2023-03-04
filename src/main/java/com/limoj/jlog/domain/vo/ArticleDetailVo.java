@@ -12,8 +12,6 @@ import java.util.Date;
 @AllArgsConstructor
 
 public class ArticleDetailVo {
-
-
     private Long id;
     //标题
     private String title;
@@ -25,8 +23,5 @@ public class ArticleDetailVo {
     private Long categoryId;
     //所属分类名
     private String categoryName;
-
-    //缩略图
-    private String thumbnail;
     private Date createTime;
 }
